@@ -5,5 +5,5 @@ pluginManagement {
     }
     
 }
-rootProject.name = "cashapp-sqldelight-issue-4349"
+rootProject.name = "cashapp-sqldelight-issue-4441"
 
