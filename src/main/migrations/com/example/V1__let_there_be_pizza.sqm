@@ -1,0 +1,19 @@
+import java.time.Instant;
+
+CREATE TABLE pizza (
+    id UUID PRIMARY KEY,
+    created_at TIMESTAMP AS Instant NOT NULL,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE pizzaSpecs (
+    id UUID PRIMARY KEY,
+    diameter_inches NUMERIC(2) NOT NULL,
+    wieght_pounds NUMERIC(2) NOT NULL
+);
+
+
+CREATE TABLE pizzaSauce (
+    id UUID PRIMARY KEY,
+    name TEXT NOT NULL
+);

@@ -1,0 +1,33 @@
+-- pizzaCreate {
+--     WITH inserted_pizza AS (
+--         INSERT INTO pizza(id, created_at, name)
+--         VALUES (GEN_RANDOM_UUID(), TIMEZONE('UTC', NOW()), :name)
+--         RETURNING id
+--     ),
+--     inserted_pizza_specs AS (
+--         INSERT INTO pizzaSpecs(id, diameter_inches, wieght_pounds)
+--         VALUES ((SELECT id FROM inserted_pizza), :diameter_inches, :weight_pounds)
+--     ),
+--     inserted_pizza_specs AS (
+--         INSERT INTO pizzaSauce(id, name)
+--         VALUES ((SELECT id FROM inserted_pizza), :sauce_name)
+--     )
+--     SELECT id FROM inserted_pizza;
+-- }
+
+pizzaCreateWorkaround {
+    INSERT INTO pizza(id, created_at, name)
+    VALUES (GEN_RANDOM_UUID(), TIMEZONE('UTC', NOW()), :name);
+    INSERT INTO pizzaSpecs(id, diameter_inches, wieght_pounds)
+    VALUES ((SELECT id FROM pizza ORDER BY created_at DESC LIMIT 1), :diameter_inches, :weight_pounds);
+    INSERT INTO pizzaSauce(id, name)
+    VALUES ((SELECT id FROM pizza ORDER BY created_at DESC LIMIT 1), :sauce_name);
+    SELECT id FROM pizza ORDER BY created_at DESC LIMIT 1;
+}
+
+pizzaGet:
+SELECT pizza.id, pizza.name, pizzaSpecs.diameter_inches, pizzaSpecs.wieght_pounds, pizzaSauce.name AS sauce_name
+FROM pizza
+LEFT JOIN pizzaSpecs ON pizzaSpecs.id = pizza.id
+LEFT JOIN pizzaSauce ON pizzaSauce.id = pizza.id
+WHERE pizza.id = ?;

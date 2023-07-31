@@ -13,10 +13,13 @@ repositories {
 }
 
 dependencies {
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.8")
+    implementation("app.cash.sqldelight:jdbc-driver:2.0.0")
+    implementation("org.postgresql:postgresql:42.6.0")
+    implementation(platform("org.testcontainers:testcontainers-bom:1.18.3"))
+    implementation("org.testcontainers:postgresql")
+    implementation("org.flywaydb:flyway-core:9.21.1")
     testImplementation(kotlin("test"))
-
-    runtimeOnly(platform("org.testcontainers:testcontainers-bom:1.18.3"))
-    runtimeOnly("org.testcontainers:postgresql")
 }
 
 tasks.test {
@@ -31,19 +34,28 @@ application {
     mainClass.set("MainKt")
 }
 
-val schema = "issue4349"
+val databaseName = "PizzaDatabase"
+val schema = "pizza"
+val databaseClassPackage = "com.example"
 
 sqldelight {
     databases {
-        create("Database") {
+        create(databaseName) {
             val migrationsDir = File(buildDir, "resources/main/db/migration/$schema")
-            packageName.set("com.example")
+            packageName.set(databaseClassPackage)
             dialect("app.cash.sqldelight:postgresql-dialect:2.0.0")
             srcDirs("src/main/sql", "src/main/migrations")
             deriveSchemaFromMigrations.set(true)
             migrationOutputDirectory.set(migrationsDir)
             migrationOutputFileFormat.set(".sql")
         }
+    }
+}
+
+tasks {
+    val generateMigrationsTask = "generateMain${databaseName}Migrations"
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        dependsOn(generateMigrationsTask)
     }
 }
 
