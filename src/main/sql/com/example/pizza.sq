@@ -8,7 +8,7 @@
 --         INSERT INTO pizzaSpecs(id, diameter_inches, wieght_pounds)
 --         VALUES ((SELECT id FROM inserted_pizza), :diameter_inches, :weight_pounds)
 --     ),
---     inserted_pizza_specs AS (
+--     inserted_pizza_sauce AS (
 --         INSERT INTO pizzaSauce(id, name)
 --         VALUES ((SELECT id FROM inserted_pizza), :sauce_name)
 --     )
